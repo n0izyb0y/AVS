@@ -1,0 +1,7 @@
+<launch>
+   <node pkg="master_station" type="master_station" name="master_station" output="screen" launch-prefix="sudo">
+    	<!-- <rosparam file="$(find MasterStation)/launch/MasterStation.yaml" command="load" /> -->
+  </node>
+
+</launch>
+
