@@ -1,0 +1,9 @@
+<!-- Данный launch-файл необходимо запускать строго с правами root'а. Иначе работать не будет. -->
+<launch>
+   <node pkg="master_station" type="master_station" name="master_station" output="screen">
+	<!-- Загрузка списка параметров, включая имена топиков, из yaml-файла. -->
+   	<rosparam file="$(find master_station)/cfg/master_station_param.yaml" command="load" />
+  </node>
+
+</launch>
+
