@@ -1,0 +1,9 @@
+<!-- Данный launch-файл необходимо запускать строго с правами root'а. Иначе работать не будет. -->
+<launch>
+   <node pkg="move_controller" type="move_controllern" name="move_controller" output="screen">
+	<!-- Загрузка списка параметров, включая имена топиков, из yaml-файла. -->
+   	<rosparam file="$(find move_controller)/cfg/move_controller_param.yaml" command="load" />
+  </node>
+
+</launch>
+
