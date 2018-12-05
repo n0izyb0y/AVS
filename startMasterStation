@@ -1,4 +1,0 @@
-#!/bin/bash
-export ROS_MASTER_URI=http://tegra-ubuntu:11311
-source /home/alister/local/workspace/devel/setup.bash
-roslaunch master_station master_station.launch
