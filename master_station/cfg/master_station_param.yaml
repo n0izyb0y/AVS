@@ -1,10 +1,14 @@
 # Параметры для пакета master_station
 
 # Путь до файла с событиями нужного устройства:
-# Клавиатура ноутбука
+# Клавиатура ноутбука alister.
 # deviceInputAdress: "/dev/input/event4"
-# USB Bluetooth клавиатура Logitech
-deviceInputAdress: "/dev/input/event14"
+# USB Bluetooth клавиатура Logitech для ноутбука alister.
+# deviceInputAdress: "/dev/input/event14"
+# Клавиатура ноутбука strix.
+# deviceInputAdress: "/dev/input/event5"
+# USB Bluetooth клавиатура Logitech для ноутбука strix.
+deviceInputAdress: "/dev/input/event6"
 
 # Имя топика для вывода команд
 outputTopicName: "cmd"
