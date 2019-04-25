@@ -28,7 +28,11 @@
 #include <ros/ros.h>
 #include <sensor_msgs/Imu.h>
 
-static const double G_TO_MPSS = 9.80665;
+#include <iostream>
+#include <tf2/LinearMath/Quaternion.h>
+#include <tf2/LinearMath/Matrix3x3.h>
+
+static const double G_TO_MPSS = 9.8155; // 22.04.19. G acceleration in Moscow. Kirill.
 
 int main(int argc, char **argv)
 {
@@ -82,6 +86,9 @@ int main(int argc, char **argv)
     imu->setCompassEnable(true);
 
     sensor_msgs::Imu imu_msg;
+    
+    std::cout << std::endl; // 05.04.19. Кирилл.
+    
     while (ros::ok())
     {
         if (imu->IMURead())
@@ -90,19 +97,44 @@ int main(int argc, char **argv)
 
             imu_msg.header.stamp = ros::Time::now();
             imu_msg.header.frame_id = frame_id;
-
-            imu_msg.orientation.x = imu_data.fusionQPose.x(); 
-            imu_msg.orientation.y = imu_data.fusionQPose.y(); 
-            imu_msg.orientation.z = imu_data.fusionQPose.z(); 
-            imu_msg.orientation.w = imu_data.fusionQPose.scalar(); 
-
+                    
+            //imu_msg.orientation.x = imu_data.fusionQPose.x();
+            //imu_msg.orientation.y = imu_data.fusionQPose.y(); 
+            //imu_msg.orientation.z = imu_data.fusionQPose.z(); 
+            //imu_msg.orientation.w = imu_data.fusionQPose.scalar(); 
+                        
+            tf2::Quaternion oldQuat(imu_data.fusionQPose.x(), imu_data.fusionQPose.y(), imu_data.fusionQPose.z(), imu_data.fusionQPose.scalar()); // 05.04.19. Считывание исходного кватерниона, полученного от драйвера MPU9250. Кирилл.
+            //double roll, pitch, yaw; // 05.04.19. Углы Эйлера для представления исходного кватерниона. Кирилл.
+            //tf2::Matrix3x3(oldQuat).getRPY(roll, pitch, yaw); // 05.04.19. Представление исходного кватерниона в виде углов Эйлера. Кирилл.
+            
+            tf2::Quaternion rotQuat, newQuat; // 05.04.19. Новый(изменённый) кватернион. Кирилл.
+            rotQuat.setRPY(-3.1416, 0.0, 1.5708); // 05.04.19. Определение нового кватерниона через углы Эйлера. Кирилл.
+            newQuat = rotQuat * oldQuat;
+            newQuat.normalize();
+                        
+            // 05.04.19. Публикация нового кватерниона. Кирилл.
+            imu_msg.orientation.x = newQuat.x(); 
+            imu_msg.orientation.y = newQuat.y(); 
+            imu_msg.orientation.z = newQuat.z(); 
+            imu_msg.orientation.w = newQuat.w(); 
+            
+            //imu_msg.angular_velocity.x = - imu_data.gyro.x();
+            //imu_msg.angular_velocity.y = imu_data.gyro.y();
+            //imu_msg.angular_velocity.z = - imu_data.gyro.z();
+            
             imu_msg.angular_velocity.x = imu_data.gyro.x();
             imu_msg.angular_velocity.y = imu_data.gyro.y();
             imu_msg.angular_velocity.z = imu_data.gyro.z();
 
+            //imu_msg.linear_acceleration.x = imu_data.accel.x() * G_TO_MPSS;
+            //imu_msg.linear_acceleration.y = - imu_data.accel.y() * G_TO_MPSS;
+            //imu_msg.linear_acceleration.z = imu_data.accel.z() * G_TO_MPSS;
+            
             imu_msg.linear_acceleration.x = imu_data.accel.x() * G_TO_MPSS;
             imu_msg.linear_acceleration.y = imu_data.accel.y() * G_TO_MPSS;
             imu_msg.linear_acceleration.z = imu_data.accel.z() * G_TO_MPSS;
+            
+            imu_msg.linear_acceleration_covariance[8] = 9999;
 
             imu_pub.publish(imu_msg);
         }
