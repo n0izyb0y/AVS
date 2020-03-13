@@ -23,8 +23,8 @@ float throttlePWMneutralPoint; // Величина ШИМ'а для контро
 float steeringPWMneutralPoint; // Величина ШИМ'а для сервопривода рулевого управления в нейтральном положении руля (steering = 0.0).
 float throttlePWMrate; // Величина изменения (от 0.0 до 1.0 и от -1.0 до 0.0) ШИМ'а для контроллера двигателя.
 float steeringPWMrate; // Величина изменения (от 0.0 до 1.0 и от -1.0 до 0.0) ШИМ'а для сервопривода рулевого управления.
-float throttleLimit;   // Ограничение максимального положения педали газа.
-
+float forwardThrottleLimit;   // Ограничение максимального положения педали газа.
+float backwardThrottleLimit;
 
 void masterInputCmdCallback(const cmd_msgs::cmd msg)
 {
@@ -32,8 +32,8 @@ void masterInputCmdCallback(const cmd_msgs::cmd msg)
     acceleration = msg.acceleration;    // Получение команды ускорения из топика ROS'а.
     steering = msg.steering;            // Получение команды поворота колёс из топика ROS'а.
 
-    if (acceleration > throttleLimit) acceleration = throttleLimit;   // Если положение педали газа больше ограничения, то положение = ограничению.
-    //if (acceleration < -throttleLimit) acceleration = -throttleLimit; // Если положение педали газа меньше ограничения со знаком минус, то положение = ограничению со знаком минус.
+    if (acceleration > forwardThrottleLimit) acceleration = forwardThrottleLimit;   // Если положение педали газа больше ограничения, то положение = ограничению.
+    if (acceleration < -backwardThrottleLimit) acceleration = -backwardThrottleLimit; // Если положение педали газа меньше ограничения со знаком минус, то положение = ограничению со знаком минус.
 
     int steeringPWM = steeringPWMneutralPoint + round(steeringPWMrate * steering);   // Рассчёт величины ШИМ'а для контроллера двигателя.
     int accelerationPWM = throttlePWMneutralPoint + round(throttlePWMrate * acceleration);  // Рассчёт величины ШИМ'a для сервопривода рулевого управления.
@@ -60,8 +60,10 @@ int main (int argc, char *argv[])
     nh.param<float>("steeringPWMneutralPoint", steeringPWMneutralPoint, 320);
     nh.param<float>("throttlePWMrate", throttlePWMrate, 140);
     nh.param<float>("steeringPWMrate", steeringPWMrate, 90);
-    nh.param<float>("throttleLimit", throttleLimit, 1.0);
+    nh.param<float>("forwardThrottleLimit", forwardThrottleLimit, 1.0);
+    nh.param<float>("backwardThrottleLimit", backwardThrottleLimit, 1.0);
 
+    // ros::Subscriber commandSub = nh.subscribe<cmd_msgs::cmd>(inputTopicName, 1, masterInputCmdCallback, ros::TransportHints().unreliable().reliable().tcpNoDelay());
     ros::Subscriber commandSub = nh.subscribe<cmd_msgs::cmd>(inputTopicName, 1, masterInputCmdCallback);
 
     ROS_INFO_STREAM("[MoveController] - (START)");

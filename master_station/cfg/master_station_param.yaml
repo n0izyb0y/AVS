@@ -8,10 +8,12 @@
 # Клавиатура ноутбука strix.
 # deviceInputAdress: "/dev/input/event5"
 # USB Bluetooth клавиатура Logitech для ноутбука strix.
-deviceInputAdress: "/dev/input/event6"
+# deviceInputAdress: "/dev/input/event6"
+# Клавиатура ноутбука smk (синий acer).
+deviceInputAdress: "/dev/input/event3"
 
 # Имя топика для вывода команд
-outputTopicName: "cmd"
+outputTopicName: "/cmd_vel"
  
 # Коэффициент для плавного увеличения газа/тормоза и поворота руля (от 0.00 до 1.00)
 incThrottleRate: 0.025 # На это значение увеличивается значение газа за единицу времени если нажата стрелка вперёд.

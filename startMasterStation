@@ -1,0 +1,11 @@
+#!/bin/bash
+
+# Проверка на наличие прав суперпользователя
+if [ $EUID != 0 ]; then #  Если скрипт запущен без sudo
+	sudo "$0" "$@" // # Перезапускаем скрипт под sudo
+	exit $? 
+fi
+
+export ROS_MASTER_URI=http://tegra-ubuntu:11311
+source /home/smk/local/workspace/devel/setup.bash
+roslaunch master_station master_station.launch

@@ -1,5 +1,6 @@
-<!-- Данный launch-файл необходимо запускать строго с правами root'а. Иначе работать не будет. -->
-<launch>
+<!-- Данный launch-файл необходимо запускать строго с правами root'а (юзер, запускающий пакет должен иметь доступ к I2C шине Jetson) -->
+<launch> 
+   <env name="ROSCONSOLE_CONFIG_FILE" value="$(find move_controller)/cfg/logging_settings_rosconsole.cfg"/>
    <node pkg="move_controller" type="move_controller" name="move_controller" output="screen">
 	<!-- Загрузка списка параметров, включая имена топиков, из yaml-файла. -->
    	<rosparam file="$(find move_controller)/cfg/move_controller_param.yaml" command="load" />

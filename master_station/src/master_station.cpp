@@ -63,7 +63,7 @@ int main (int argc, char *argv[])
 
     ros::Publisher commandPub = nh.advertise<cmd_msgs::cmd>(outputTopicName, 1);
 
-    ros::Rate loop_rate(100);
+    ros::Rate loop_rate(200);
 
     //// ПЕРЕВОД ТЕРМИНАЛА В RAW РЕЖИМ ////
     // Структура для хранения старых настроек терминала (до изменений).
